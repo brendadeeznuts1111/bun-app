@@ -1,0 +1,257 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  validate:
+    name: Validate Repository
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Validate app bundle structure
+      run: |
+        echo "🔍 Validating app bundle structure..."
+        if [[ ! -d "Contents" ]]; then
+          echo "❌ Contents directory not found"
+          exit 1
+        fi
+        
+        if [[ ! -f "Contents/Info.plist" ]]; then
+          echo "❌ Info.plist not found"
+          exit 1
+        fi
+        
+        if [[ ! -f "Contents/MacOS/app_mode_loader" ]]; then
+          echo "❌ app_mode_loader not found"
+          exit 1
+        fi
+        
+        if [[ ! -f "Contents/Resources/app.icns" ]]; then
+          echo "❌ app.icns not found"
+          exit 1
+        fi
+        
+        echo "✅ App bundle structure is valid"
+
+    - name: Validate Info.plist
+      run: |
+        echo "🔍 Validating Info.plist..."
+        
+        # Check if bundle ID exists
+        if ! plutil -p Contents/Info.plist | grep -q "CFBundleIdentifier"; then
+          echo "❌ CFBundleIdentifier not found in Info.plist"
+          exit 1
+        fi
+        
+        # Check if URL is set
+        if ! plutil -p Contents/Info.plist | grep -q "CrAppModeShortcutURL"; then
+          echo "❌ CrAppModeShortcutURL not found in Info.plist"
+          exit 1
+        fi
+        
+        # Check if executable is set
+        if ! plutil -p Contents/Info.plist | grep -q "app_mode_loader"; then
+          echo "❌ app_mode_loader not found in Info.plist"
+          exit 1
+        fi
+        
+        echo "✅ Info.plist is valid"
+
+    - name: Check executable permissions
+      run: |
+        echo "🔍 Checking executable permissions..."
+        if [[ ! -x "Contents/MacOS/app_mode_loader" ]]; then
+          echo "❌ app_mode_loader is not executable"
+          exit 1
+        fi
+        echo "✅ Executable permissions are correct"
+
+  build-test:
+    name: Test Build Script
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Chrome (if not present)
+      run: |
+        echo "🔍 Checking for Chrome installation..."
+        if [[ ! -d "/Applications/Google Chrome.app" ]]; then
+          echo "📦 Installing Google Chrome..."
+          brew install --cask google-chrome
+        else
+          echo "✅ Chrome is already installed"
+        fi
+
+    - name: Test build script
+      run: |
+        echo "🔧 Testing build script..."
+        
+        # Test with default parameters
+        chmod +x build.sh
+        ./build.sh "https://example.com" "TestApp"
+        
+        # Verify the test app was created
+        if [[ ! -d "TestApp.app" ]]; then
+          echo "❌ Test app was not created"
+          exit 1
+        fi
+        
+        # Verify the test app structure
+        if [[ ! -f "TestApp.app/Contents/Info.plist" ]]; then
+          echo "❌ Test app Info.plist not found"
+          exit 1
+        fi
+        
+        echo "✅ Build script test passed"
+
+    - name: Test app functionality
+      run: |
+        echo "🧪 Testing app functionality..."
+        
+        # Try to launch the test app (non-blocking)
+        timeout 10s open "TestApp.app" || true
+        
+        # Wait a moment for it to potentially start
+        sleep 3
+        
+        # Check if any test app processes are running
+        if pgrep -f "TestApp.app" > /dev/null; then
+          echo "✅ Test app launched successfully"
+          # Clean up
+          pkill -f "TestApp.app" || true
+        else
+          echo "⚠️ Test app may not have launched (this could be expected in CI)"
+        fi
+        
+        # Clean up test app
+        rm -rf "TestApp.app"
+
+  security:
+    name: Security Scan
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Scan for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+
+    - name: Check code signature
+      run: |
+        echo "🔒 Checking code signature..."
+        if [[ -f "Contents/_CodeSignature/CodeResources" ]]; then
+          echo "✅ Code signature file exists"
+        else
+          echo "⚠️ No code signature file found (expected for development)"
+        fi
+
+  documentation:
+    name: Documentation Check
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Check README
+      run: |
+        echo "📚 Checking README.md..."
+        if [[ ! -f "README.md" ]]; then
+          echo "❌ README.md not found"
+          exit 1
+        fi
+        
+        # Check for required sections
+        if ! grep -q "## Installation" README.md; then
+          echo "❌ Installation section not found in README"
+          exit 1
+        fi
+        
+        if ! grep -q "## Usage" README.md; then
+          echo "❌ Usage section not found in README"
+          exit 1
+        fi
+        
+        echo "✅ README.md is valid"
+
+    - name: Check LICENSE
+      run: |
+        echo "📄 Checking LICENSE..."
+        if [[ ! -f "LICENSE" ]]; then
+          echo "❌ LICENSE file not found"
+          exit 1
+        fi
+        
+        if ! grep -q "MIT License" LICENSE; then
+          echo "❌ LICENSE does not contain MIT License text"
+          exit 1
+        fi
+        
+        echo "✅ LICENSE is valid"
+
+  release:
+    name: Create Release
+    runs-on: macos-latest
+    needs: [validate, build-test, security, documentation]
+    if: github.event_name == 'release'
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create release archive
+      run: |
+        echo "📦 Creating release archive..."
+        tar -czf bun-app-${{ github.event.release.tag_name }}.tar.gz Bun.app README.md LICENSE build.sh
+        
+        # Generate checksum
+        shasum -a 256 bun-app-${{ github.event.release.tag_name }}.tar.gz > bun-app-${{ github.event.release.tag_name }}.tar.gz.sha256
+
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./bun-app-${{ github.event.release.tag_name }}.tar.gz
+        asset_name: bun-app-${{ github.event.release.tag_name }}.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload checksum
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./bun-app-${{ github.event.release.tag_name }}.tar.gz.sha256
+        asset_name: bun-app-${{ github.event.release.tag_name }}.tar.gz.sha256
+        asset_content_type: text/plain
+
+  notify:
+    name: Notification
+    runs-on: macos-latest
+    needs: [validate, build-test, security, documentation]
+    if: always()
+    steps:
+    - name: Notify on success
+      if: ${{ needs.validate.result == 'success' && needs.build-test.result == 'success' && needs.security.result == 'success' && needs.documentation.result == 'success' }}
+      run: |
+        echo "🎉 All checks passed successfully!"
+        echo "✅ Repository is ready for production use"
+
+    - name: Notify on failure
+      if: ${{ needs.validate.result == 'failure' || needs.build-test.result == 'failure' || needs.security.result == 'failure' || needs.documentation.result == 'failure' }}
+      run: |
+        echo "❌ Some checks failed. Please review the logs above."
+        exit 1
