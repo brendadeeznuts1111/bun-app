@@ -9,8 +9,10 @@
 ![Code](https://img.shields.io/badge/code-15%2Bk-orange.svg)
 ![Users](https://img.shields.io/badge/multi--user-yes-success.svg)
 ![Profiles](https://img.shields.io/badge/multi--profile-yes-success.svg)
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.1-blue.svg)
 ![Release](https://img.shields.io/github/release-date/brendadeeznuts1111/bun-app.svg)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-informational.svg)
+![Bun](https://img.shields.io/badge/bun-1.3.0+-black.svg)
 
 ## 🌟 Overview
 
@@ -416,9 +418,100 @@ This project follows [Semantic Versioning](https://semver.org/):
 
 ## 📋 Requirements
 
-- **macOS**: 12.0 or later
-- **Google Chrome**: Latest version installed
-- **Architecture**: Intel or Apple Silicon (ARM64)
+### 💻 Operating System Support
+
+**🍎 macOS (Primary Platform)**
+- **Version**: 12.0 (Monterey) or later
+- **Architecture**: Intel (x86_64) or Apple Silicon (ARM64)
+- **Features**: Full native app bundle, Gatekeeper compliance, notarization
+
+**🪟 Windows**
+- **Version**: Windows 10 (version 1903) or later
+- **Architecture**: x64, ARM64
+- **Chrome App Mode**: Supported via Chrome shortcuts
+- **Enhanced Systems**: All shell scripts require WSL or Git Bash
+
+**🐧 Linux**
+- **Distributions**: Ubuntu 20.04+, Debian 11+, Fedora 35+, Arch Linux
+- **Architecture**: x64, ARM64
+- **Chrome App Mode**: Supported via Chrome shortcuts
+- **Enhanced Systems**: All shell scripts native support
+
+### 🌐 Browser Requirements
+
+**Google Chrome** (Required for Core Functionality)
+- **Version**: 143.0.7499.193 or later
+- **Features**: App mode, extensions, developer tools
+- **Platform Support**: Windows, macOS, Linux
+
+**Alternative Browsers** (Limited Support)
+- **Microsoft Edge**: Chromium-based (Windows, macOS, Linux)
+- **Opera**: Chromium-based (Windows, macOS, Linux)
+- **Brave**: Chromium-based (Windows, macOS, Linux)
+
+### 🔧 Enhanced System Requirements
+
+**For Advanced Features:**
+- **Bun Runtime**: 1.3.0+ (for version management and package scripts)
+- **Git**: 2.30+ (for version control and collaboration features)
+- **Node.js**: 18.0+ (optional, for some analytics features)
+- **Python 3**: 3.9+ (optional, for ML analytics features)
+
+**Network Requirements:**
+- **Internet Connection**: Required for OAuth, analytics, and marketplace
+- **Local Server**: Ports 3000, 8080, 9000 available for enhanced features
+- **HTTPS**: Required for OAuth integrations
+
+**Hardware Recommendations:**
+- **RAM**: 8GB minimum (16GB recommended for analytics)
+- **Storage**: 500MB free space (2GB for full development setup)
+- **Processor**: Modern 64-bit CPU (multi-core recommended)
+
+### 📱 Platform-Specific Notes
+
+**macOS Features:**
+- ✅ Native app bundle with proper code signing
+- ✅ Gatekeeper and notarization compliance
+- ✅ Touch ID and Face ID biometric support
+- ✅ Apple Silicon native optimization
+- ✅ macOS-specific security features
+
+**Windows Features:**
+- ✅ Chrome app mode shortcuts
+- ✅ Windows Hello biometric integration (planned)
+- ✅ PowerShell script support
+- ⚠️ Enhanced features require WSL or Git Bash
+
+**Linux Features:**
+- ✅ Chrome app mode shortcuts
+- ✅ Native shell script execution
+- ✅ Package manager integration
+- ✅ Server deployment capabilities
+- ✅ Docker container support (planned)
+
+### 🚀 Cross-Platform Compatibility
+
+**Core Application**: ✅ Works on all platforms with Chrome
+**Enhanced Systems**: ✅ Shell scripts work on macOS, Linux, Windows (WSL)
+**Web Dashboards**: ✅ Full compatibility across platforms
+**Authentication**: ✅ OAuth works on all platforms
+**Real-time Features**: ✅ WebSocket support universal
+
+### 📊 Platform Support Matrix
+
+| Feature | macOS | Windows | Linux |
+|---------|-------|---------|-------|
+| **Chrome App Mode** | ✅ Native | ✅ Full | ✅ Full |
+| **Security System** | ✅ Full | ✅ Full | ✅ Full |
+| **Collaboration Server** | ✅ Full | ✅ Full | ✅ Full |
+| **Analytics Dashboard** | ✅ Full | ✅ Full | ✅ Full |
+| **Plugin Marketplace** | ✅ Full | ✅ Full | ✅ Full |
+| **Biometric Auth** | ✅ Touch/Face ID | ⚠️ Windows Hello | ❌ Limited |
+| **Native App Bundle** | ✅ Full | ❌ Chrome Only | ❌ Chrome Only |
+| **Shell Scripts** | ✅ Native | ⚠️ WSL/Git Bash | ✅ Native |
+| **Version Management** | ✅ Full | ✅ Full | ✅ Full |
+
+**Legend**: ✅ Full Support | ⚠️ Partial Support | ❌ Not Available
 
 ## 🚀 Quick Start
 
