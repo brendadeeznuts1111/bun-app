@@ -9,6 +9,8 @@
 ![Code](https://img.shields.io/badge/code-15%2Bk-orange.svg)
 ![Users](https://img.shields.io/badge/multi--user-yes-success.svg)
 ![Profiles](https://img.shields.io/badge/multi--profile-yes-success.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Release](https://img.shields.io/github/release-date/brendadeeznuts1111/bun-app.svg)
 
 ## 🌟 Overview
 
@@ -214,12 +216,52 @@ Beyond being a production-ready application, Bun.app serves as a **comprehensive
 
 This project transforms theoretical knowledge into **practical, production-ready skills** while maintaining the highest standards of code quality, security, and user experience. It serves as both a **reference implementation** and a **learning platform** for modern enterprise software development.
 
+## 🏷️ Version & Release Information
+
+**Current Version:** `2.0.0` (Released: 2026-01-19)
+
+### 📋 Version History
+- **[v2.0.0](CHANGELOG.md#200---2026-01-19)** - 🚀 Major Enterprise Platform Transformation
+- **[v1.0.0](CHANGELOG.md#100---2026-01-19)** - 🎉 Initial Release
+
+### 🔄 Version Management
+```bash
+# Show current version
+./scripts/version-manager.sh current
+
+# Bump version (patch/minor/major)
+./scripts/version-manager.sh bump --patch
+./scripts/version-manager.sh bump --minor
+./scripts/version-manager.sh bump --major
+
+# Create release
+./scripts/version-manager.sh release
+```
+
+### 📊 Changelog
+For detailed changes in each version, see the comprehensive [CHANGELOG.md](CHANGELOG.md).
+
+### 🔄 Migration Guide
+Upgrading from a previous version? Check our [Migration Guide](MIGRATION_GUIDE.md) for step-by-step instructions.
+
+### 🏷️ Semantic Versioning
+This project follows [Semantic Versioning](https://semver.org/):
+- **MAJOR**: Incompatible API changes or major feature additions
+- **MINOR**: New functionality in a backwards compatible manner  
+- **PATCH**: Backwards compatible bug fixes
+
 ### 📑 Table of Contents
 
 - [🌟 Overview](#-overview)
   - [🎯 Platform Evolution](#-platform-evolution)
   - [🏗️ Enterprise Architecture](#️-enterprise-architecture)
   - [🎓 Learning Platform](#-learning-platform)
+- [🏷️ Version & Release Information](#️-version--release-information)
+  - [📋 Version History](#-version-history)
+  - [🔄 Version Management](#-version-management)
+  - [📊 Changelog](#-changelog)
+  - [🔄 Migration Guide](#-migration-guide)
+  - [🏷️ Semantic Versioning](#️-semantic-versioning)
 - [✨ Core Features](#-core-features)
   - [🖥️ Native Application](#️-native-application)
   - [👥 Multi-User System](#-multi-user-system)
