@@ -52,3 +52,36 @@ test('basic - main scripts exist', async () => {
     expect(scriptExists).toBe(true);
   }
 });
+
+test('basic - documentation files exist', async () => {
+  const docs = [
+    'README.md',
+    'PACKAGE.md',
+    'README_PACKAGE.md',
+    'CHANGELOG.md',
+    'MIGRATION_GUIDE.md',
+    'CHECKSUMS.md',
+    'LICENSE',
+    'VERSION'
+  ];
+  
+  for (const doc of docs) {
+    const docPath = path.join(process.cwd(), doc);
+    const docExists = await Bun.file(docPath).exists();
+    expect(docExists).toBe(true);
+  }
+});
+
+test('basic - package.json has enhanced metadata', async () => {
+  const packageFile = path.join(process.cwd(), 'package.json');
+  const packageContent = await Bun.file(packageFile).text();
+  const packageJson = JSON.parse(packageContent);
+  
+  expect(packageJson.name).toBe('@brendadeeznuts1111/bun-app');
+  expect(packageJson.description).toContain('🚀');
+  expect(packageJson.keywords.length).toBeGreaterThan(20);
+  expect(packageJson.author.email).toBeTruthy();
+  expect(packageJson.funding).toBeTruthy();
+  expect(packageJson.contributors).toBeTruthy();
+  expect(packageJson.directories).toBeTruthy();
+});
