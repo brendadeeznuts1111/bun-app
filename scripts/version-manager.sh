@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Version Manager for Bun.app
-# Handles semantic versioning, changelog updates, and releases
+# Handles semantic versioning using Bun's built-in semver functionality
 
 set -e
 
@@ -22,8 +22,28 @@ VERSION_FILE="$PROJECT_DIR/VERSION"
 CHANGELOG_FILE="$PROJECT_DIR/CHANGELOG.md"
 PACKAGE_FILE="$PROJECT_DIR/package.json"
 
+# Check if Bun is available
+check_bun() {
+    if ! command -v bun >/dev/null 2>&1; then
+        echo -e "${RED}❌ Bun is not installed or not in PATH${NC}"
+        echo -e "${YELLOW}Please install Bun from https://bun.sh${NC}"
+        exit 1
+    fi
+}
+
+# Get current version from package.json or VERSION file
+get_current_version() {
+    if [[ -f "$PACKAGE_FILE" ]] && command -v jq >/dev/null 2>&1; then
+        jq -r '.version // empty' "$PACKAGE_FILE" 2>/dev/null
+    elif [[ -f "$VERSION_FILE" ]]; then
+        cat "$VERSION_FILE"
+    else
+        echo "1.0.0"
+    fi
+}
+
 # Current version
-CURRENT_VERSION=$(cat "$VERSION_FILE" 2>/dev/null || echo "1.0.0")
+CURRENT_VERSION=$(get_current_version)
 
 # Parse command line arguments
 parse_args() {
@@ -64,13 +84,13 @@ parse_args() {
 # Show help
 show_help() {
     cat << EOF
-🏷️  Bun.app Version Manager
+🏷️  Bun.app Version Manager (Powered by Bun SemVer)
 
 USAGE:
     $0 [OPTIONS] <COMMAND>
 
 COMMANDS:
-    bump                   Bump version (patch by default)
+    bump                   Bump version using Bun's semver (patch by default)
     current                Show current version
     release                Create release with changelog
     tag                    Create git tag for current version
@@ -85,71 +105,121 @@ OPTIONS:
     -h, --help             Show this help
 
 EXAMPLES:
-    $0 bump --patch        # Bump to 1.0.1
-    $0 bump --minor        # Bump to 1.1.0
-    $0 bump --major        # Bump to 2.0.0
+    $0 bump --patch        # Bump to 1.0.1 using Bun semver
+    $0 bump --minor        # Bump to 1.1.0 using Bun semver
+    $0 bump --major        # Bump to 2.0.0 using Bun semver
     $0 release             # Create release
     $0 current             # Show current version
 
-VERSION FORMAT:
-    Follows Semantic Versioning: MAJOR.MINOR.PATCH
-    - MAJOR: Incompatible API changes
-    - MINOR: New functionality (backwards compatible)
-    - PATCH: Bug fixes (backwards compatible)
+BUN SEMVER FEATURES:
+- Automatic semantic versioning
+- Git tag creation
+- package.json updates
+- Version validation
+- Release automation
 
 EOF
 }
 
-# Validate version format
+# Validate version format using Bun
 validate_version() {
     local version="$1"
-    if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    check_bun
+    
+    # Use Bun to validate version format
+    if ! bun pm pkg get version >/dev/null 2>&1; then
         echo -e "${RED}❌ Invalid version format: $version${NC}"
         echo -e "${YELLOW}Expected format: MAJOR.MINOR.PATCH (e.g., 2.0.0)${NC}"
         exit 1
     fi
 }
 
-# Bump version based on type
+# Bump version using Bun's semver
 bump_version() {
+    check_bun
+    
     local bump_type="${BUMP_TYPE:-patch}"
-    local version="$CURRENT_VERSION"
     
-    # Parse current version
-    IFS='.' read -ra PARTS <<< "$version"
-    local major="${PARTS[0]}"
-    local minor="${PARTS[1]}"
-    local patch="${PARTS[2]}"
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "${YELLOW}🔍 DRY RUN: Would bump version using Bun semver ($bump_type)${NC}"
+        local current=$(get_current_version)
+        echo -e "${BLUE}Current: $current${NC}"
+        return
+    fi
     
-    case "$bump_type" in
-        "patch")
-            patch=$((patch + 1))
-            ;;
-        "minor")
-            minor=$((minor + 1))
-            patch=0
-            ;;
-        "major")
-            major=$((major + 1))
-            minor=0
-            patch=0
-            ;;
-        *)
-            echo -e "${RED}❌ Invalid bump type: $bump_type${NC}"
-            exit 1
-            ;;
-    esac
+    echo -e "${BLUE}📝 Bumping version using Bun semver ($bump_type)${NC}"
     
-    NEW_VERSION="$major.$minor.$patch"
-    validate_version "$NEW_VERSION"
+    # Ensure we're in project directory
+    cd "$PROJECT_DIR"
+    
+    # Create package.json if it doesn't exist
+    if [[ ! -f "$PACKAGE_FILE" ]]; then
+        echo -e "${YELLOW}⚠️  Creating package.json for version management${NC}"
+        cat > "$PACKAGE_FILE" << EOF
+{
+  "name": "bun-app",
+  "version": "$CURRENT_VERSION",
+  "description": "Enterprise-Grade Chrome Web Application Platform",
+  "type": "commonjs"
+}
+EOF
+    fi
+    
+    # Use Bun to bump version
+    if bun pm version "$bump_type" >/dev/null 2>&1; then
+        NEW_VERSION=$(get_current_version)
+        echo -e "${GREEN}✅ Version bumped to $NEW_VERSION using Bun semver${NC}"
+    else
+        echo -e "${RED}❌ Failed to bump version using Bun semver${NC}"
+        exit 1
+    fi
+    
+    # Update VERSION file for backward compatibility
+    echo "$NEW_VERSION" > "$VERSION_FILE"
 }
 
-# Update version files
+# Set specific version using Bun
+set_version() {
+    local version="$1"
+    validate_version "$version"
+    
+    if [[ "$DRY_RUN" == true ]]; then
+        echo -e "${YELLOW}🔍 DRY RUN: Would set version to $version${NC}"
+        return
+    fi
+    
+    echo -e "${BLUE}📝 Setting version to $version using Bun${NC}"
+    
+    # Ensure we're in project directory
+    cd "$PROJECT_DIR"
+    
+    # Create package.json if it doesn't exist
+    if [[ ! -f "$PACKAGE_FILE" ]]; then
+        cat > "$PACKAGE_FILE" << EOF
+{
+  "name": "bun-app",
+  "version": "$version",
+  "description": "Enterprise-Grade Chrome Web Application Platform",
+  "type": "commonjs"
+}
+EOF
+    else
+        # Update version in package.json using Bun
+        bun pm pkg set "version=$version"
+    fi
+    
+    # Update VERSION file for backward compatibility
+    echo "$version" > "$VERSION_FILE"
+    
+    echo -e "${GREEN}✅ Version set to $version${NC}"
+}
+
+# Update version files (maintained for backward compatibility)
 update_version_files() {
     local version="$1"
     
     if [[ "$DRY_RUN" == true ]]; then
-        echo -e "${YELLOW}🔍 DRY RUN: Would update version to $version${NC}"
+        echo -e "${YELLOW}🔍 DRY RUN: Would update version files to $version${NC}"
         return
     fi
     
@@ -157,16 +227,6 @@ update_version_files() {
     
     # Update VERSION file
     echo "$version" > "$VERSION_FILE"
-    
-    # Update package.json if exists
-    if [[ -f "$PACKAGE_FILE" ]]; then
-        if command -v jq >/dev/null 2>&1; then
-            jq --arg version "$version" '.version = $version' "$PACKAGE_FILE" > "$PACKAGE_FILE.tmp"
-            mv "$PACKAGE_FILE.tmp" "$PACKAGE_FILE"
-        else
-            echo -e "${YELLOW}⚠️  jq not found, skipping package.json update${NC}"
-        fi
-    fi
     
     # Update Info.plist if exists
     local info_plist="$PROJECT_DIR/Contents/Info.plist"
@@ -308,6 +368,12 @@ show_current_version() {
     echo -e "${BOLD}📋 Current Version:${NC}"
     echo -e "${GREEN}$CURRENT_VERSION${NC}"
     
+    # Show Bun version
+    if command -v bun >/dev/null 2>&1; then
+        local bun_version=$(bun --version)
+        echo -e "${BOLD}🥞 Bun Version:${NC} $bun_version"
+    fi
+    
     # Show git status
     if git rev-parse --git-dir > /dev/null 2>&1; then
         local current_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "No tags")
@@ -319,10 +385,12 @@ show_current_version() {
 validate_setup() {
     echo -e "${BLUE}🔍 Validating version setup...${NC}"
     
+    # Check Bun
+    check_bun
+    
     # Check VERSION file
     if [[ ! -f "$VERSION_FILE" ]]; then
-        echo -e "${RED}❌ VERSION file not found${NC}"
-        exit 1
+        echo -e "${YELLOW}⚠️  VERSION file not found, will create${NC}"
     fi
     
     # Validate version format
@@ -360,14 +428,13 @@ main() {
             ;;
         "bump")
             validate_setup
-            if [[ -z "$NEW_VERSION" ]]; then
-                bump_version
+            if [[ -n "$NEW_VERSION" ]]; then
+                set_version "$NEW_VERSION"
             else
-                validate_version "$NEW_VERSION"
+                bump_version
             fi
-            update_version_files "$NEW_VERSION"
             update_changelog "$NEW_VERSION"
-            echo -e "${BOLD}🎉 Version bumped to $NEW_VERSION${NC}"
+            echo -e "${BOLD}🎉 Version bumped to $NEW_VERSION using Bun semver${NC}"
             ;;
         "tag")
             validate_setup
@@ -375,11 +442,15 @@ main() {
             ;;
         "release")
             validate_setup
-            update_version_files "$CURRENT_VERSION"
-            update_changelog "$CURRENT_VERSION"
-            create_git_tag "$CURRENT_VERSION"
-            create_release "$CURRENT_VERSION"
-            echo -e "${BOLD}🎉 Release $CURRENT_VERSION created successfully!${NC}"
+            if [[ -n "$NEW_VERSION" ]]; then
+                set_version "$NEW_VERSION"
+            else
+                bump_version
+            fi
+            update_changelog "$NEW_VERSION"
+            create_git_tag "$NEW_VERSION"
+            create_release "$NEW_VERSION"
+            echo -e "${BOLD}🎉 Release $NEW_VERSION created successfully using Bun semver!${NC}"
             ;;
         "help"|*)
             show_help
