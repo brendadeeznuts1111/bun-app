@@ -165,8 +165,8 @@ bump_version() {
 EOF
     fi
     
-    # Use Bun to bump version
-    if bun pm version "$bump_type" >/dev/null 2>&1; then
+    # Use Bun to bump version directly
+    if bun pm version "$bump_type"; then
         NEW_VERSION=$(get_current_version)
         echo -e "${GREEN}✅ Version bumped to $NEW_VERSION using Bun semver${NC}"
     else
