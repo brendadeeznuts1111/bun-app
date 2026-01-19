@@ -30,7 +30,7 @@ test('basic - package.json has required fields', async () => {
   const packageContent = await Bun.file(packageFile).text();
   const packageJson = JSON.parse(packageContent);
   
-  expect(packageJson.name).toBe('bun-app');
+  expect(packageJson.name).toBe('@brendadeeznuts1111/bun-app');
   expect(packageJson.version).toMatch(/^\d+\.\d+\.\d+$/);
   expect(packageJson.description).toBeTruthy();
   expect(packageJson.scripts).toBeTruthy();
