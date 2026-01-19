@@ -1,0 +1,57 @@
+# Exclude build artifacts
+dist/
+build/
+*.log
+*.tmp
+
+# Exclude macOS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Exclude git files
+.git/
+.gitignore
+.gitattributes
+
+# Exclude GitHub files
+.github/
+
+# Exclude documentation files (keep package.json and README)
+*.md
+!README.md
+
+# Exclude test files
+tests/
+*.test.js
+*.spec.js
+
+# Exclude configuration files
+config/
+*.yaml
+*.yml
+
+# Exclude large binaries
+Contents/MacOS/
+*.icns
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Exclude localization
+locales/
+i18n.sh
+
+# Exclude scripts (keep main ones)
+scripts/
+!scripts/version-manager.sh
+*.sh
+!package.json
+!README.md
+!LICENSE
+!VERSION

@@ -1,14 +1,19 @@
 {
   "name": "bun-app",
-  "version": "2.0.2",
-  "description": "Enterprise-Grade Chrome Web Application Platform",
+  "version": "2.0.1",
+  "description": "Enterprise-Grade Chrome Web Application Platform with advanced security, real-time collaboration, AI-powered analytics, and plugin marketplace",
+  "main": "scripts/version-manager.sh",
   "type": "commonjs",
   "scripts": {
     "demo": "./showcase/enhanced-demo.sh",
     "security": "./security/auth-manager.sh",
     "collaboration": "./collaboration/collab-server.sh",
     "analytics": "./analytics/ai-dashboard.sh",
-    "marketplace": "./plugins/marketplace.sh"
+    "marketplace": "./plugins/marketplace.sh",
+    "version": "./scripts/version-manager.sh",
+    "build": "./build-advanced.sh",
+    "install": "./create-release-assets.sh",
+    "test": "./tests/test_app.sh"
   },
   "keywords": [
     "enterprise-platform",
@@ -29,19 +34,41 @@
     "macos-app",
     "demo-system",
     "training",
-    "certification"
+    "certification",
+    "semver",
+    "version-management"
   ],
   "author": "Bun.app Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/brendadeeznuts1111/bun-app.git"
+    "url": "git+https://github.com/brendadeeznuts1111/bun-app.git"
   },
   "bugs": {
     "url": "https://github.com/brendadeeznuts1111/bun-app/issues"
   },
   "homepage": "https://github.com/brendadeeznuts1111/bun-app#readme",
   "engines": {
-    "bun": ">=1.3.0"
+    "bun": ">=1.3.0",
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "scripts/",
+    "README.md",
+    "LICENSE",
+    "VERSION",
+    "package.json"
+  ],
+  "bin": {
+    "bun-app": "./scripts/version-manager.sh",
+    "bun-app-demo": "./showcase/enhanced-demo.sh",
+    "bun-app-security": "./security/auth-manager.sh",
+    "bun-app-collaboration": "./collaboration/collab-server.sh",
+    "bun-app-analytics": "./analytics/ai-dashboard.sh",
+    "bun-app-marketplace": "./plugins/marketplace.sh"
+  },
+  "preferGlobal": true,
+  "publishConfig": {
+    "access": "public"
   }
 }
