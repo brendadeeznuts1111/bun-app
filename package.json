@@ -11,9 +11,8 @@
     "analytics": "./analytics/ai-dashboard.sh",
     "marketplace": "./plugins/marketplace.sh",
     "version": "./scripts/version-manager.sh",
-    "build": "./build-advanced.sh",
     "install": "./create-release-assets.sh",
-    "test": "./tests/test_app.sh"
+    "test": "bun test"
   },
   "keywords": [
     "enterprise-platform",
