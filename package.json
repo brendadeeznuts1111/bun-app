@@ -1,11 +1,9 @@
 {
   "name": "bun-app",
-  "version": "2.0.2",
+  "version": "2.0.0",
   "description": "Enterprise-Grade Chrome Web Application Platform",
   "type": "commonjs",
   "scripts": {
-    "version": "./scripts/version-manager.sh bump",
-    "release": "./scripts/version-manager.sh release",
     "demo": "./showcase/enhanced-demo.sh",
     "security": "./security/auth-manager.sh",
     "collaboration": "./collaboration/collab-server.sh",
