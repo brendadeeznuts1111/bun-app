@@ -229,10 +229,15 @@ This project transforms theoretical knowledge into **practical, production-ready
 # Show current version
 ./scripts/version-manager.sh current
 
-# Bump version (patch/minor/major)
+# Bump version using Bun's semver (patch/minor/major)
 ./scripts/version-manager.sh bump --patch
 ./scripts/version-manager.sh bump --minor
 ./scripts/version-manager.sh bump --major
+
+# Or use Bun directly
+bun pm version patch
+bun pm version minor
+bun pm version major
 
 # Create release
 ./scripts/version-manager.sh release
