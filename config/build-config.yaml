@@ -1,0 +1,296 @@
+# Bun.app Build Configuration
+# Advanced configuration for customizing Chrome web app builds
+
+# Global settings
+global:
+  default_chrome_path: "/Applications/Google Chrome.app"
+  default_output_dir: "./dist"
+  temp_dir: "./tmp"
+  cleanup_temp: true
+  verbose: false
+
+# Build templates
+templates:
+  # Minimal template - basic functionality
+  minimal:
+    name: "Minimal Web App"
+    description: "Basic Chrome web app with minimal features"
+    icon: "templates/icons/default.icns"
+    user_agent: null
+    window_size: "1200x800"
+    permissions:
+      - "notifications"
+      - "geolocation"
+    security:
+      allow_insecure_content: false
+      allow_running_insecure_content: false
+      javascript_enabled: true
+      web_security_enabled: true
+
+  # Developer template - enhanced for developers
+  developer:
+    name: "Developer Web App"
+    description: "Chrome web app with developer tools and debugging"
+    icon: "templates/icons/developer.icns"
+    user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+    window_size: "1400x900"
+    permissions:
+      - "notifications"
+      - "geolocation"
+      - "camera"
+      - "microphone"
+      - "background-sync"
+    security:
+      allow_insecure_content: true
+      allow_running_insecure_content: true
+      javascript_enabled: true
+      web_security_enabled: false
+      debugging_enabled: true
+    features:
+      - "developer_tools"
+      - "console_access"
+      - "network_inspector"
+
+  # Enterprise template - corporate features
+  enterprise:
+    name: "Enterprise Web App"
+    description: "Chrome web app with enterprise security and management"
+    icon: "templates/icons/enterprise.icns"
+    user_agent: null
+    window_size: "1280x850"
+    permissions:
+      - "notifications"
+      - "geolocation"
+      - "certificate-management"
+    security:
+      allow_insecure_content: false
+      allow_running_insecure_content: false
+      javascript_enabled: true
+      web_security_enabled: true
+      certificate_pinning: true
+      sso_enabled: true
+    features:
+      - "enterprise_sso"
+      - "certificate_management"
+      - "audit_logging"
+      - "policy_enforcement"
+
+  # Kiosk template - public display mode
+  kiosk:
+    name: "Kiosk Web App"
+    description: "Chrome web app for kiosk and public display"
+    icon: "templates/icons/kiosk.icns"
+    user_agent: "Kiosk-Browser/1.0"
+    window_size: "1920x1080"
+    fullscreen: true
+    kiosk_mode: true
+    permissions:
+      - "fullscreen"
+      - "kiosk-api"
+    security:
+      allow_insecure_content: false
+      allow_running_insecure_content: false
+      javascript_enabled: true
+      web_security_enabled: true
+      address_bar_hidden: true
+      navigation_disabled: true
+    features:
+      - "kiosk_mode"
+      - "auto_reset"
+      - "session_timeout"
+      - "content_filtering"
+
+# Icon templates
+icons:
+  default:
+    path: "templates/icons/default.icns"
+    sizes: [16, 32, 64, 128, 256, 512, 1024]
+    format: "icns"
+  
+  developer:
+    path: "templates/icons/developer.icns"
+    sizes: [16, 32, 64, 128, 256, 512, 1024]
+    format: "icns"
+    style: "modern"
+  
+  enterprise:
+    path: "templates/icons/enterprise.icns"
+    sizes: [16, 32, 64, 128, 256, 512, 1024]
+    format: "icns"
+    style: "corporate"
+  
+  kiosk:
+    path: "templates/icons/kiosk.icns"
+    sizes: [16, 32, 64, 128, 256, 512, 1024]
+    format: "icns"
+    style: "minimal"
+
+# Security profiles
+security_profiles:
+  high:
+    description: "High security - maximum restrictions"
+    allow_insecure_content: false
+    allow_running_insecure_content: false
+    javascript_enabled: true
+    web_security_enabled: true
+    certificate_pinning: true
+    strict_mixed_content_checking: true
+    allow_file_access_from_file_urls: false
+    allow_file_access: false
+  
+  medium:
+    description: "Medium security - balanced restrictions"
+    allow_insecure_content: false
+    allow_running_insecure_content: false
+    javascript_enabled: true
+    web_security_enabled: true
+    certificate_pinning: false
+    strict_mixed_content_checking: true
+    allow_file_access_from_file_urls: false
+    allow_file_access: false
+  
+  low:
+    description: "Low security - developer friendly"
+    allow_insecure_content: true
+    allow_running_insecure_content: true
+    javascript_enabled: true
+    web_security_enabled: false
+    certificate_pinning: false
+    strict_mixed_content_checking: false
+    allow_file_access_from_file_urls: true
+    allow_file_access: true
+
+# Performance profiles
+performance_profiles:
+  optimized:
+    description: "Optimized for performance"
+    memory_limit: "256MB"
+    cpu_limit: "50%"
+    network_throttling: false
+    cache_enabled: true
+    prefetch_enabled: true
+    lazy_loading: true
+  
+  lightweight:
+    description: "Lightweight - minimal resource usage"
+    memory_limit: "128MB"
+    cpu_limit: "25%"
+    network_throttling: true
+    cache_enabled: false
+    prefetch_enabled: false
+    lazy_loading: true
+  
+  resource_intensive:
+    description: "Resource intensive - maximum features"
+    memory_limit: "512MB"
+    cpu_limit: "75%"
+    network_throttling: false
+    cache_enabled: true
+    prefetch_enabled: true
+    lazy_loading: false
+
+# Localization settings
+localization:
+  default_language: "en-US"
+  supported_languages:
+    - "en-US"
+    - "en-GB"
+    - "es-ES"
+    - "fr-FR"
+    - "de-DE"
+    - "ja-JP"
+    - "zh-CN"
+    - "ko-KR"
+  
+  translations:
+    en-US:
+      app_name: "Web App"
+      loading: "Loading..."
+      error: "Error"
+      retry: "Retry"
+    
+    es-ES:
+      app_name: "Aplicación Web"
+      loading: "Cargando..."
+      error: "Error"
+      retry: "Reintentar"
+    
+    fr-FR:
+      app_name: "Application Web"
+      loading: "Chargement..."
+      error: "Erreur"
+      retry: "Réessayer"
+
+# Build optimization
+optimization:
+  compression:
+    enabled: true
+    level: 6
+    algorithms: ["gzip", "brotli"]
+  
+  minification:
+    enabled: true
+    html: true
+    css: true
+    js: false
+  
+  caching:
+    enabled: true
+    cache_headers: true
+    service_worker: false
+  
+  bundling:
+    enabled: true
+    tree_shaking: true
+    code_splitting: false
+
+# Deployment settings
+deployment:
+  platforms:
+    - "macos"
+    - "windows"
+    - "linux"
+  
+  distribution:
+    github_releases: true
+    homebrew: false
+    snap: false
+    flatpak: false
+  
+  signing:
+    enabled: false
+    certificate_path: null
+    certificate_password: null
+  
+  notarization:
+    enabled: false
+    apple_id: null
+    apple_password: null
+    team_id: null
+
+# Monitoring and analytics
+monitoring:
+  enabled: false
+  analytics_provider: "google"
+  tracking_id: null
+  error_reporting: true
+  performance_monitoring: true
+  usage_analytics: false
+
+# Development settings
+development:
+  debug_mode: false
+  hot_reload: false
+  live_reload: false
+  source_maps: false
+  dev_tools: false
+  mock_data: false
+
+# Testing configuration
+testing:
+  unit_tests: true
+  integration_tests: true
+  e2e_tests: false
+  performance_tests: true
+  security_tests: true
+  accessibility_tests: false

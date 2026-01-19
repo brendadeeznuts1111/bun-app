@@ -1,0 +1,307 @@
+# Bun.app Deployment Configuration
+# Advanced deployment and distribution settings
+
+# Global deployment settings
+global:
+  default_environment: "staging"
+  version_scheme: "auto"  # auto, semantic, timestamp
+  create_release: true
+  upload_to_github: true
+  sign_app: false
+  notarize: false
+  dry_run: false
+  verbose: false
+
+# Environment configurations
+environments:
+  staging:
+    description: "Test deployment with validation"
+    requires_signing: false
+    requires_notarization: false
+    create_release: false
+    upload_to_github: false
+    run_tests: true
+    security_scan: true
+    performance_baseline: true
+    
+  production:
+    description: "Production deployment with full checks"
+    requires_signing: true
+    requires_notarization: true
+    create_release: true
+    upload_to_github: true
+    run_tests: true
+    security_scan: true
+    performance_baseline: true
+    code_signature_check: true
+    notarization_check: true
+
+# Version configuration
+versioning:
+  auto:
+    format: "YYYY.MM.DD-HASH"
+    date_format: "%Y.%m.%d"
+    hash_length: 8
+    
+  semantic:
+    format: "MAJOR.MINOR.PATCH"
+    auto_increment: "patch"
+    
+  timestamp:
+    format: "YYYYMMDD-HHMMSS"
+    timezone: "UTC"
+
+# Code signing configuration
+signing:
+  enabled: false
+  identity: "Developer ID Application: Your Name"
+  certificate_path: null
+  certificate_password: null
+  team_id: null
+  entitlements_file: "config/entitlements.plist"
+  
+  # Signing options
+  force_sign: true
+  deep_sign: true
+  verify_signature: true
+  
+  # Runtime requirements
+  runtime_version: "12.0"
+  hardened_runtime: true
+  library_validation: false
+
+# Notarization configuration
+notarization:
+  enabled: false
+  apple_id: "your@email.com"
+  apple_password: "@keychain:AC_PASSWORD"
+  team_id: "YOUR_TEAM_ID"
+  
+  # Notarization options
+  staple: true
+  wait_for_completion: true
+  timeout: 300
+  
+  # Provider settings
+  provider: "apple-id"
+  asc_provider: null
+
+# Archive configuration
+archives:
+  formats:
+    - "zip"
+    - "dmg"
+    
+  zip:
+    compression_level: 6
+    include_hidden: false
+    
+  dmg:
+    window_size: "600x300"
+    window_pos: "200x120"
+    icon_size: 100
+    app_position: "175x120"
+    link_position: "425x120"
+    background_color: "#ffffff"
+    title: "Bun.app"
+    
+  # Checksum configuration
+  checksums:
+    algorithms:
+      - "sha256"
+      - "sha512"
+    generate_checksums: true
+    include_in_release: true
+
+# GitHub integration
+github:
+  repository: "brendadeeznuts1111/bun-app"
+  create_release: true
+  release_as_latest: true
+  release_as_draft: false
+  
+  # Release settings
+  generate_release_notes: true
+  include_checksums: true
+  include_manifest: true
+  
+  # Asset upload
+  upload_assets: true
+  asset_concurrency: 4
+  retry_uploads: 3
+
+# Distribution channels
+distribution:
+  channels:
+    - name: "github"
+      enabled: true
+      auto_upload: true
+      
+    - name: "homebrew"
+      enabled: false
+      formula_path: "homebrew/bun-app.rb"
+      
+    - name: "snap"
+      enabled: false
+      snapcraft_yaml: "snap/snapcraft.yaml"
+      
+    - name: "flatpak"
+      enabled: false
+      manifest_path: "flatpak/com.bunapp.app.yml"
+
+# Testing configuration
+testing:
+  pre_deployment:
+    unit_tests: true
+    integration_tests: true
+    security_tests: true
+    performance_tests: true
+    
+  post_deployment:
+    smoke_tests: true
+    regression_tests: true
+    user_acceptance_tests: false
+
+# Security configuration
+security:
+  scanning:
+    enabled: true
+    tools:
+      - "trufflehog"
+      - "semgrep"
+      - "safety"
+      
+  vulnerability_checking:
+    enabled: true
+    severity_threshold: "medium"
+    
+  code_analysis:
+    enabled: true
+    tools:
+      - "sonarqube"
+      - "codeql"
+
+# Performance configuration
+performance:
+  benchmarking:
+    enabled: true
+    metrics:
+      - "launch_time"
+      - "memory_usage"
+      - "cpu_usage"
+      - "network_latency"
+      
+  baseline:
+    launch_time_ms: 3000
+    memory_usage_mb: 100
+    cpu_usage_percent: 5
+    network_latency_ms: 500
+
+# Notification configuration
+notifications:
+  enabled: true
+  channels:
+    - type: "email"
+      enabled: false
+      recipients:
+        - "team@example.com"
+        
+    - type: "slack"
+      enabled: false
+      webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+      channel: "#deployments"
+      
+    - type: "discord"
+      enabled: false
+      webhook_url: "https://discord.com/api/webhooks/YOUR/DISCORD/WEBHOOK"
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  metrics:
+    - "deployment_success_rate"
+    - "deployment_duration"
+    - "release_download_count"
+    - "error_rate"
+    
+  health_checks:
+    - "github_api_status"
+    - "build_status"
+    - "test_status"
+
+# Rollback configuration
+rollback:
+  enabled: true
+  automatic_rollback: false
+  rollback_triggers:
+    - "deployment_failure"
+    - "health_check_failure"
+    - "performance_regression"
+    
+  rollback_window: "24h"
+  max_rollback_attempts: 3
+
+# Cleanup configuration
+cleanup:
+  enabled: true
+  cleanup_after_deployment: true
+  
+  retention:
+    builds: 10
+    releases: 5
+    archives: 3
+    logs: 7
+    
+  cleanup_targets:
+    - "temp_files"
+    - "old_builds"
+    - "expired_archives"
+
+# Logging configuration
+logging:
+  level: "info"  # debug, info, warn, error
+  format: "json"  # json, text
+  
+  log_files:
+    deployment: "logs/deployment.log"
+    error: "logs/error.log"
+    audit: "logs/audit.log"
+    
+  rotation:
+    max_size: "100MB"
+    max_files: 10
+    compress: true
+
+# Integration configuration
+integrations:
+  ci_cd:
+    github_actions: true
+    jenkins: false
+    gitlab_ci: false
+    
+  artifact_storage:
+    github_releases: true
+    s3_bucket: false
+    azure_blob: false
+    
+  monitoring:
+    datadog: false
+    new_relic: false
+    prometheus: false
+
+# Compliance configuration
+compliance:
+  standards:
+    - "SOC2"
+    - "ISO27001"
+    - "GDPR"
+    
+  audit_logging:
+    enabled: true
+    include_user_actions: true
+    include_system_events: true
+    
+  data_protection:
+    encrypt_artifacts: false
+    anonymize_logs: true
+    data_retention_policy: "90d"
