@@ -1,5 +1,5 @@
 {
-  "name": "bun-app",
+  "name": "@brendadeeznuts1111/bun-app",
   "version": "2.0.1",
   "description": "Enterprise-Grade Chrome Web Application Platform with advanced security, real-time collaboration, AI-powered analytics, and plugin marketplace",
   "main": "scripts/version-manager.sh",
@@ -58,16 +58,8 @@
     "VERSION",
     "package.json"
   ],
-  "bin": {
-    "bun-app": "./scripts/version-manager.sh",
-    "bun-app-demo": "./showcase/enhanced-demo.sh",
-    "bun-app-security": "./security/auth-manager.sh",
-    "bun-app-collaboration": "./collaboration/collab-server.sh",
-    "bun-app-analytics": "./analytics/ai-dashboard.sh",
-    "bun-app-marketplace": "./plugins/marketplace.sh"
-  },
-  "preferGlobal": true,
   "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
     "access": "public"
   }
 }
